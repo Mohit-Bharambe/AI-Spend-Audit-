@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import useLocalStorage from '../hooks/useLocalStorage'
 
 const planOptions = ['Free', 'Pro', 'Team', 'Business', 'Enterprise']
 const useCaseOptions = ['Coding', 'Research', 'Writing', 'Data', 'Mixed']
@@ -13,9 +13,12 @@ const initialTools = [
 ]
 
 function SpendForm() {
-  const [tools, setTools] = useState(initialTools)
-  const [teamSize, setTeamSize] = useState(12)
-  const [primaryUseCase, setPrimaryUseCase] = useState('Coding')
+  const [tools, setTools] = useLocalStorage('audit-tools', initialTools)
+  const [teamSize, setTeamSize] = useLocalStorage('audit-team-size', 12)
+  const [primaryUseCase, setPrimaryUseCase] = useLocalStorage(
+    'audit-primary-use-case',
+    'Coding',
+  )
 
   const updateTool = (field, value) => {
     setTools((currentTools) =>
@@ -150,7 +153,7 @@ function SpendForm() {
                   </p>
                 </div>
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-xs font-semibold tracking-[0.16em] text-cyan-200">
-                  {tools[0].tool.slice(0, 2).toUpperCase()}
+                  {(tools[0].tool || 'CU').slice(0, 2).toUpperCase()}
                 </div>
               </div>
 
