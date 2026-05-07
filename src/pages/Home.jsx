@@ -3,23 +3,74 @@ import Layout from '../components/Layout'
 
 const features = [
   {
-    title: 'Seat-level visibility',
+    title: 'AI Spend Analysis',
     description:
-      'Track who is actually using paid AI seats and surface idle licenses before renewals hit.',
+      'Break down where money goes across subscriptions, credits, API usage, and idle seats before waste compounds.',
+    accent:
+      'from-cyan-400/20 via-sky-400/10 to-transparent',
   },
   {
-    title: 'Vendor overlap detection',
+    title: 'Plan Optimization',
     description:
-      'Find teams paying for multiple tools that solve the same workflow across engineering, design, and ops.',
+      'Spot teams paying for premium tiers they do not need and identify cheaper plans that preserve the same output.',
+    accent:
+      'from-emerald-400/20 via-teal-400/10 to-transparent',
   },
   {
-    title: 'API spend monitoring',
+    title: 'Tool Alternatives',
     description:
-      'Catch runaway usage, token spikes, and background spend before the invoice becomes a surprise.',
+      'Compare overlapping vendors and surface lower-cost replacements when multiple products solve the same job.',
+    accent:
+      'from-violet-400/20 via-fuchsia-400/10 to-transparent',
+  },
+  {
+    title: 'Credit Savings',
+    description:
+      'Track credit burn and usage spikes so prepaid balances last longer and surprise API invoices stay under control.',
+    accent:
+      'from-amber-400/20 via-orange-400/10 to-transparent',
+  },
+  {
+    title: 'Shareable Reports',
+    description:
+      'Generate clean summaries founders, finance, and ops can review together without digging through scattered dashboards.',
+    accent:
+      'from-slate-200/16 via-slate-400/8 to-transparent',
   },
 ]
 
-const tools = ['ChatGPT', 'Claude', 'Cursor', 'GitHub Copilot', 'Gemini', 'OpenAI API']
+const tools = [
+  {
+    name: 'ChatGPT',
+    mark: 'CG',
+    tone: 'from-emerald-300/18 to-transparent',
+  },
+  {
+    name: 'Claude',
+    mark: 'CL',
+    tone: 'from-orange-300/18 to-transparent',
+  },
+  {
+    name: 'Cursor',
+    mark: 'CU',
+    tone: 'from-cyan-300/18 to-transparent',
+  },
+  {
+    name: 'GitHub Copilot',
+    mark: 'GH',
+    tone: 'from-slate-200/18 to-transparent',
+  },
+  {
+    name: 'Gemini',
+    mark: 'GE',
+    tone: 'from-violet-300/18 to-transparent',
+  },
+  {
+    name: 'Windsurf',
+    mark: 'WS',
+    tone: 'from-sky-300/18 to-transparent',
+  },
+]
 
 const benefits = [
   'Cut duplicate AI subscriptions without slowing the team.',
@@ -47,16 +98,30 @@ function Home() {
           </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {features.map((feature) => (
-            <article key={feature.title} className="panel px-6 py-6">
-              <div className="mb-5 h-12 w-12 rounded-2xl border border-cyan-300/20 bg-cyan-300/8" />
+            <article
+              key={feature.title}
+              className="group panel relative overflow-hidden px-6 py-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-white/[0.06]"
+            >
+              <div
+                className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${feature.accent} opacity-70 transition duration-300 group-hover:opacity-100`}
+              />
+              <div className="relative">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-xs font-semibold tracking-[0.18em] text-white">
+                  {feature.title
+                    .split(' ')
+                    .map((word) => word[0])
+                    .join('')
+                    .slice(0, 2)}
+                </div>
               <h3 className="text-xl font-semibold text-white">
                 {feature.title}
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-400">
                 {feature.description}
               </p>
+              </div>
             </article>
           ))}
         </div>
@@ -66,11 +131,11 @@ function Home() {
         <div className="panel px-6 py-6">
           <span className="eyebrow">Supported Tools</span>
           <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white">
-            Audit the stack your team already uses.
+            Works across the AI products your team is already paying for.
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-400">
-            Pull a simple spend picture across seat-based apps and API vendors
-            without needing a heavyweight procurement workflow first.
+            Review spend across chat tools, coding copilots, and AI workspaces
+            in one place without forcing a heavyweight rollout first.
           </p>
         </div>
 
@@ -78,10 +143,18 @@ function Home() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {tools.map((tool) => (
               <div
-                key={tool}
-                className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-sm font-medium text-slate-200"
+                key={tool.name}
+                className={`group rounded-2xl border border-white/8 bg-gradient-to-br ${tool.tone} px-4 py-5 text-left transition duration-300 hover:-translate-y-1 hover:border-cyan-300/20 hover:bg-white/[0.05]`}
               >
-                {tool}
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-xs font-semibold tracking-[0.16em] text-white">
+                  {tool.mark}
+                </div>
+                <p className="text-sm font-medium text-slate-100">
+                  {tool.name}
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">
+                  Spend ready
+                </p>
               </div>
             ))}
           </div>
