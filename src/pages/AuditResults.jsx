@@ -62,6 +62,7 @@ function AuditResults() {
   )
 
   const annualSavings = summary.monthlySavings * 12
+  const shouldShowCredexCta = summary.monthlySavings > 500
 
   return (
     <section id="audit-results" className="mt-8">
@@ -80,7 +81,7 @@ function AuditResults() {
               </p>
             </div>
             <div className="rounded-3xl border border-cyan-300/15 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100">
-              Team size: {teamSize} · Use case: {primaryUseCase}
+              Team size: {teamSize} {'·'} Use case: {primaryUseCase}
             </div>
           </div>
 
@@ -222,19 +223,35 @@ function AuditResults() {
             <p className="text-sm uppercase tracking-[0.2em] text-slate-500">
               CTA
             </p>
-            <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white">
-              Turn these recommendations into a cleaner AI budget.
-            </h3>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
-              Share the audit summary with founders, finance, or engineering and
-              clean up wasted spend before the next billing cycle locks in.
-            </p>
-            <button
-              type="button"
-              className="mt-8 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
-            >
-              Export audit summary
-            </button>
+            {shouldShowCredexCta ? (
+              <>
+                <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white">
+                  Talk to Credex
+                </h3>
+                <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
+                  Your projected savings are large enough to justify a more
+                  deliberate credits and vendor review before the next billing
+                  cycle closes.
+                </p>
+                <button
+                  type="button"
+                  className="mt-8 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
+                >
+                  Talk to Credex
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white">
+                  Your AI stack is already optimized.
+                </h3>
+                <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
+                  The audit does not show enough recoverable spend to justify a
+                  bigger intervention right now, which is the honest outcome for
+                  this setup.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
