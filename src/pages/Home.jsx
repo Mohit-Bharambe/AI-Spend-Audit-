@@ -1,3 +1,4 @@
+import AuditResults from './AuditResults'
 import Hero from '../components/Hero'
 import Layout from '../components/Layout'
 import SpendForm from '../components/SpendForm'
@@ -84,6 +85,7 @@ function Home() {
     <Layout>
       <Hero />
       <SpendForm />
+      <AuditResults />
 
       <section id="features" className="mt-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

@@ -1,8 +1,9 @@
-function createResult(recommendation, savings, reason) {
+function createResult(recommendation, savings, reason, details = {}) {
   return {
     recommendation,
     savings: Math.round(savings * 100) / 100,
     reason,
+    ...details,
   }
 }
 
@@ -22,6 +23,9 @@ export function auditTool(toolEntry, context = {}) {
       'Downgrade to Plus',
       20,
       'Team pricing carries collaboration overhead that is hard to justify when only one or two seats are active.',
+      {
+        recommendedPlan: 'Plus',
+      },
     )
   }
 
@@ -30,6 +34,9 @@ export function auditTool(toolEntry, context = {}) {
       'Use Credex credits',
       spend * 0.3,
       'At this spend level, discounted credits can materially reduce recurring infrastructure cost without changing team behavior.',
+      {
+        recommendedTool: 'Credex credits',
+      },
     )
   }
 
@@ -38,14 +45,20 @@ export function auditTool(toolEntry, context = {}) {
       'Shift coding seats to Cursor or Claude',
       spend * 0.2,
       'For code-heavy workflows, dedicated coding tools usually provide better output per paid seat than general chat subscriptions.',
+      {
+        recommendedTool: 'Cursor or Claude',
+      },
     )
   }
 
   if (tool === 'cursor' && plan === 'business' && seats < 5) {
     return createResult(
-      'Review downgrade to Pro',
-      spend * 0.25,
+      'Downgrade to Pro',
+      spend * 0.5,
       'Business plans make more sense once admin and policy features are being used across a larger engineering group.',
+      {
+        recommendedPlan: 'Pro',
+      },
     )
   }
 
@@ -54,6 +67,9 @@ export function auditTool(toolEntry, context = {}) {
       'Reduce Copilot seat scope',
       spend * 0.15,
       'Large Copilot rollouts are often over-allocated when non-engineering teams inherit seats they do not use consistently.',
+      {
+        recommendedTool: 'GitHub Copilot (smaller seat pool)',
+      },
     )
   }
 
