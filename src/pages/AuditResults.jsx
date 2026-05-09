@@ -1,5 +1,8 @@
-import runAudit from '../data/auditEngine'
+import { generateAudit } from '../utils/auditEngine'
+import { mockInput } from '../data/mockAuditInput'
 import useLocalStorage from '../hooks/useLocalStorage'
+
+console.log('Audit Engine Test Output:', generateAudit(mockInput));
 
 const fallbackTools = [
   {
@@ -19,14 +22,10 @@ function formatCurrency(value) {
 }
 
 function buildTransitionLabel(toolEntry) {
-  const currentLabel = `${toolEntry.tool} ${toolEntry.plan}`.trim()
+  const currentLabel = `${toolEntry.tool} ${toolEntry.currentPlan}`.trim()
 
-  if (toolEntry.audit.recommendedPlan) {
-    return `${currentLabel} -> ${toolEntry.tool} ${toolEntry.audit.recommendedPlan}`
-  }
-
-  if (toolEntry.audit.recommendedTool) {
-    return `${currentLabel} -> ${toolEntry.audit.recommendedTool}`
+  if (toolEntry.recommendedPlan && toolEntry.recommendedPlan !== toolEntry.currentPlan) {
+    return `${currentLabel} -> ${toolEntry.recommendedPlan}`
   }
 
   return currentLabel
@@ -37,23 +36,20 @@ function AuditResults() {
   const [teamSize] = useLocalStorage('audit-team-size', 12)
   const [primaryUseCase] = useLocalStorage('audit-primary-use-case', 'Coding')
 
-  const auditedTools = runAudit(tools, {
-    teamSize,
+  const auditedTools = generateAudit(tools.map(t => ({
+    tool: t.tool,
+    plan: t.plan,
+    monthlySpend: Number(t.spend) || 0,
+    seats: Number(t.seats) || 1,
     useCase: primaryUseCase,
-  })
+  })))
 
   const summary = auditedTools.reduce(
-    (totals, toolEntry) => {
-      const currentSpend = Number(toolEntry.spend) || 0
-      const monthlySavings = Number(toolEntry.audit.savings) || 0
-
-      return {
-        currentSpend: totals.currentSpend + currentSpend,
-        recommendedSpend:
-          totals.recommendedSpend + Math.max(currentSpend - monthlySavings, 0),
-        monthlySavings: totals.monthlySavings + monthlySavings,
-      }
-    },
+    (totals, toolEntry) => ({
+      currentSpend: totals.currentSpend + toolEntry.currentSpend,
+      recommendedSpend: totals.recommendedSpend + toolEntry.optimizedSpend,
+      monthlySavings: totals.monthlySavings + toolEntry.monthlySavings,
+    }),
     {
       currentSpend: 0,
       recommendedSpend: 0,
@@ -122,14 +118,14 @@ function AuditResults() {
               <div className="mt-5 space-y-3">
                 {auditedTools.map((toolEntry) => (
                   <div
-                    key={`${toolEntry.tool}-${toolEntry.plan}`}
+                    key={`${toolEntry.tool}-${toolEntry.currentPlan}`}
                     className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition duration-300 hover:border-blue-400/30"
                   >
                     <p className="text-sm font-bold text-slate-900">
-                      {toolEntry.audit.recommendation}
+                      {toolEntry.recommendedPlan !== toolEntry.currentPlan ? `Switch to ${toolEntry.recommendedPlan}` : 'Optimized'}
                     </p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {toolEntry.audit.reason}
+                      {toolEntry.reason}
                     </p>
                   </div>
                 ))}
@@ -149,14 +145,14 @@ function AuditResults() {
 
             <div className="grid gap-4 xl:grid-cols-2">
               {auditedTools.map((toolEntry) => {
-                const currentSpend = Number(toolEntry.spend) || 0
-                const monthlySavings = Number(toolEntry.audit.savings) || 0
-                const annualToolSavings = monthlySavings * 12
-                const recommendedSpend = Math.max(currentSpend - monthlySavings, 0)
+                const currentSpend = toolEntry.currentSpend
+                const monthlySavings = toolEntry.monthlySavings
+                const annualToolSavings = toolEntry.annualSavings
+                const recommendedSpend = toolEntry.optimizedSpend
 
                 return (
                   <article
-                    key={`${toolEntry.tool}-${toolEntry.plan}-card`}
+                    key={`${toolEntry.tool}-${toolEntry.currentPlan}-card`}
                     className="group rounded-[32px] border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-400/20"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -210,7 +206,7 @@ function AuditResults() {
                         Rationalization
                       </p>
                       <p className="mt-2 text-sm leading-7 text-slate-600">
-                        {toolEntry.audit.reason}
+                        {toolEntry.reason}
                       </p>
                     </div>
                   </article>
@@ -252,8 +248,8 @@ function AuditResults() {
         </div>
       </div>
     </section>
-
   )
 }
+
 
 export default AuditResults
