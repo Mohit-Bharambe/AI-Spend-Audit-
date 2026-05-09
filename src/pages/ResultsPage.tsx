@@ -1,18 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Layout from '../components/Layout';
 import AuditCard from '../components/results/AuditCard';
 import { generateAudit } from '../utils/auditEngine';
 import { getTotalMonthlySavings, getAnnualSavings, isHighSavings } from '../utils/calculateSavings';
 import { mockInput } from '../data/mockAuditInput';
+import { getAiAuditSummary } from '../services/aiSummary';
 
 const ResultsPage: React.FC = () => {
+  const [aiSummary, setAiSummary] = useState<string>('');
+  const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(true);
+
   // In a real app, we'd get this from local storage or context
-  // Using mock data for high-fidelity demonstration
   const auditResults = generateAudit(mockInput);
   const monthlySavings = getTotalMonthlySavings(auditResults);
   const annualSavings = getAnnualSavings(monthlySavings);
   const isHigh = isHighSavings(monthlySavings);
+
+  useEffect(() => {
+    async function fetchSummary() {
+      setIsLoadingSummary(true);
+      try {
+        const summary = await getAiAuditSummary(auditResults);
+        setAiSummary(summary);
+      } finally {
+        setIsLoadingSummary(false);
+      }
+    }
+    fetchSummary();
+  }, []);
 
   return (
     <Layout>
@@ -69,9 +85,19 @@ const ResultsPage: React.FC = () => {
         <section className="grid gap-6 lg:grid-cols-2">
           <div className="panel bg-slate-50/50 p-8 border-dashed border-2">
             <h3 className="text-lg font-bold text-slate-900">AI Intelligence Summary</h3>
-            <p className="mt-4 text-sm leading-7 text-slate-600">
-              Your organization is currently experiencing "Tier Drift"—a phenomenon where teams remain on Enterprise or Business plans long after their seat count or usage justifies the premium. Consolidating Claude and ChatGPT into a single primary workspace could yield an additional 15% efficiency gain.
-            </p>
+            <div className="mt-4">
+              {isLoadingSummary ? (
+                <div className="space-y-3">
+                  <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
+                  <div className="h-4 w-5/6 animate-pulse rounded bg-slate-200" />
+                  <div className="h-4 w-4/6 animate-pulse rounded bg-slate-200" />
+                </div>
+              ) : (
+                <p className="text-sm leading-7 text-slate-600 whitespace-pre-wrap">
+                  {aiSummary}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className={`panel p-8 transition-all ${isHigh ? 'bg-blue-600 text-white shadow-blue-200' : 'bg-white border-slate-200'}`}>
@@ -92,5 +118,6 @@ const ResultsPage: React.FC = () => {
     </Layout>
   );
 };
+
 
 export default ResultsPage;
