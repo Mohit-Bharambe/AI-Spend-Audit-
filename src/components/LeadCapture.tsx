@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 
 interface LeadCaptureProps {
@@ -7,12 +8,19 @@ interface LeadCaptureProps {
 }
 
 const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [role, setRole] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Shareable link copied to clipboard!');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +28,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
     setError(null);
 
     try {
-      const { error: supabaseError } = await supabase
+      const { data, error: supabaseError } = await supabase
         .from('audits')
         .insert([
           {
@@ -31,11 +39,18 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
             audit_data: auditData,
             created_at: new Date().toISOString(),
           },
-        ]);
+        ])
+        .select('id')
+        .single();
 
       if (supabaseError) throw supabaseError;
 
-      setIsSuccess(true);
+      if (data) {
+        setSavedId(data.id);
+        setIsSuccess(true);
+        // Navigate to the shareable URL
+        navigate(`/results/${data.id}`, { replace: true });
+      }
     } catch (err: any) {
       console.error('Error saving lead:', err);
       setError(err.message || 'Failed to save audit results. Please try again.');
@@ -56,6 +71,16 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
         <p className="mt-2 text-sm text-emerald-700">
           We've saved your audit. A detailed PDF summary and optimization roadmap have been sent to <strong>{email}</strong>.
         </p>
+        <button 
+          onClick={copyLink}
+          className="mt-6 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-bold text-emerald-700 shadow-sm hover:bg-emerald-50 transition-all"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+          </svg>
+          Copy Shareable Link
+        </button>
+
       </div>
     );
   }
