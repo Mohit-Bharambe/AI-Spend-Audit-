@@ -7,6 +7,7 @@ import { getTotalMonthlySavings, getAnnualSavings, isHighSavings } from '../util
 import { mockInput } from '../data/mockAuditInput';
 import { getAiAuditSummary } from '../services/aiSummary';
 import LeadCapture from '../components/LeadCapture';
+import { supabase } from '../services/supabase';
 
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -184,10 +185,5 @@ const ResultsPage: React.FC = () => {
   );
 };
 
-      </div>
-    </Layout>
-  );
-};
-
-
 export default ResultsPage;
+

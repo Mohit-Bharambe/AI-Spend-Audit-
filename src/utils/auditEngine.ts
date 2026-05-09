@@ -4,8 +4,12 @@ import { getPlanPrice } from "./getPlanPrice";
 export function generateAudit(tools: ToolInput[]): AuditResult[] {
   const toolNames = tools.map(t => t.tool.toLowerCase());
   const results: AuditResult[] = tools.map((tool) => {
+    // Defensive sanitization
+    const monthlySpend = Math.max(0, tool.monthlySpend);
+    const seats = Math.max(1, tool.seats);
+
     let recommendedPlan = tool.plan;
-    let optimizedSpend = tool.monthlySpend;
+    let optimizedSpend = monthlySpend;
     let reason = "Your current plan seems appropriate for your usage.";
     let severity: "low" | "medium" | "high" = "low";
 
