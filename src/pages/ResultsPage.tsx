@@ -9,6 +9,7 @@ import { getAiAuditSummary } from '../services/aiSummary';
 import LeadCapture from '../components/LeadCapture';
 
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const ResultsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -104,6 +105,15 @@ const ResultsPage: React.FC = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Recovered ${annualSavings}/year in AI Waste | Spend Audit</title>
+        <meta name="description" content={`We identified ${activeAuditResults.length} optimization opportunities in this AI stack. See how we uncovered $${monthlySavings}/mo in recurring savings.`} />
+        <meta property="og:title" content={`Recovered $${annualSavings}/year in AI Waste`} />
+        <meta property="og:description" content="Startup AI spend auditing. Identify waste, consolidate seats, and tighten your procurement cycle." />
+        <meta property="og:image" content="https://xdjulsytbmiqvfdulfii.supabase.co/storage/v1/object/public/assets/audit-preview.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`Recovered $${annualSavings}/year in AI Waste`} />
+      </Helmet>
       <div className="animate-enter space-y-10 py-6">
         {/* HERO SAVINGS CARD */}
         <section className="panel relative overflow-hidden bg-slate-900 px-6 py-12 text-center text-white shadow-2xl sm:px-12 sm:py-16">

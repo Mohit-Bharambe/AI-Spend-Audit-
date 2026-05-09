@@ -2,6 +2,7 @@ import AuditResults from './AuditResults'
 import Hero from '../components/Hero'
 import Layout from '../components/Layout'
 import SpendForm from '../components/SpendForm'
+import { Helmet } from 'react-helmet'
 
 const features = [
   {
@@ -83,6 +84,13 @@ const benefits = [
 function Home() {
   return (
     <Layout>
+      <Helmet>
+        <title>Spend Audit | Identify and Cut Startup AI Waste</title>
+        <meta name="description" content="Audit your AI tooling stack in seconds. Identify overlapping subscriptions, unused seats, and over-provisioned enterprise tiers." />
+        <meta property="og:title" content="Spend Audit | Cut Startup AI Waste" />
+        <meta property="og:description" content="Audit your AI tooling stack in seconds. Stop overpaying for AI." />
+        <meta property="og:image" content="https://xdjulsytbmiqvfdulfii.supabase.co/storage/v1/object/public/assets/audit-preview.png" />
+      </Helmet>
       <Hero />
       <SpendForm />
       <AuditResults />
