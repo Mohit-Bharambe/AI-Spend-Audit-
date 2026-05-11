@@ -2,7 +2,7 @@ import { generateAudit } from '../utils/auditEngine'
 import { mockInput } from '../data/mockAuditInput'
 import useLocalStorage from '../hooks/useLocalStorage'
 
-console.log('Audit Engine Test Output:', generateAudit(mockInput));
+
 
 const fallbackTools = [
   {

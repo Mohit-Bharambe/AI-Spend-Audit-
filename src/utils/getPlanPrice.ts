@@ -1,9 +1,12 @@
 import { pricingData } from "../data/pricingData";
 
 export function getPlanPrice(tool: string, plan: string): number {
-  const toolData = (pricingData as any)[tool.toLowerCase().replace(" ", "_")];
+  const key = tool.toLowerCase().replace(/\s+/g, "_");
+  const toolData = (pricingData as any)[key];
   if (!toolData) return 0;
   
   const planData = toolData[plan.toLowerCase()];
-  return planData ? planData.price : 0;
+  if (!planData || typeof planData.price !== "number") return 0;
+  
+  return planData.price;
 }

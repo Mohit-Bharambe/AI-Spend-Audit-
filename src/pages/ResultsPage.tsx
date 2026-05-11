@@ -4,7 +4,7 @@ import AuditCard from '../components/results/AuditCard';
 import { generateAudit } from '../utils/auditEngine';
 import { getTotalMonthlySavings, getAnnualSavings, isHighSavings } from '../utils/calculateSavings';
 import { mockInput } from '../data/mockAuditInput';
-import { getAiAuditSummary } from '../services/aiSummary';
+import { generateSummary } from '../services/generateSummary';
 import LeadCapture from '../components/LeadCapture';
 import { supabase } from '../services/supabase';
 import { useParams } from 'react-router-dom';
@@ -91,7 +91,7 @@ const ResultsPage: React.FC = () => {
       async function fetchSummary() {
         setIsLoadingSummary(true);
         try {
-          const summary = await getAiAuditSummary(activeAuditResults);
+          const summary = await generateSummary(activeAuditResults);
           setAiSummary(summary);
         } catch (err) {
           console.error('AI summary failed:', err);
@@ -166,13 +166,13 @@ const ResultsPage: React.FC = () => {
   return (
     <Layout>
       <Helmet>
-        <title>Recovered ${annualSavings}/year in AI Waste | Spend Audit</title>
-        <meta name="description" content={`We identified ${activeAuditResults.length} optimization opportunities in this AI stack. See how we uncovered $${monthlySavings}/mo in recurring savings.`} />
-        <meta property="og:title" content={`Recovered $${annualSavings}/year in AI Waste`} />
+        <title>{"Recovered $" + annualSavings + "/year in AI Waste | Spend Audit"}</title>
+        <meta name="description" content={"We identified " + activeAuditResults.length + " optimization opportunities. See how we uncovered $" + monthlySavings + "/mo in recurring savings."} />
+        <meta property="og:title" content={"Recovered $" + annualSavings + "/year in AI Waste"} />
         <meta property="og:description" content="Startup AI spend auditing. Identify waste, consolidate seats, and tighten your procurement cycle." />
         <meta property="og:image" content="https://xdjulsytbmiqvfdulfii.supabase.co/storage/v1/object/public/assets/audit-preview.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Recovered $${annualSavings}/year in AI Waste`} />
+        <meta name="twitter:title" content={"Recovered $" + annualSavings + "/year in AI Waste"} />
       </Helmet>
       <div className="animate-enter space-y-10 py-6">
         {/* HERO SAVINGS CARD */}
