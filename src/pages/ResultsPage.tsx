@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import Layout from '../components/Layout';
 import AuditCard from '../components/results/AuditCard';
 import { generateAudit } from '../utils/auditEngine';
@@ -8,9 +7,9 @@ import { mockInput } from '../data/mockAuditInput';
 import { getAiAuditSummary } from '../services/aiSummary';
 import LeadCapture from '../components/LeadCapture';
 import { supabase } from '../services/supabase';
-
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import toast from 'react-hot-toast';
 
 const ResultsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,10 +18,17 @@ const ResultsPage: React.FC = () => {
   const [isLoadingDb, setIsLoadingDb] = useState<boolean>(!!id);
   const [sharedResults, setSharedResults] = useState<any[] | null>(null);
   const [sharedTeamSize, setSharedTeamSize] = useState<number>(12);
-  
+  const [dbError, setDbError] = useState<string | null>(null);
+
   // Real app data from local storage (only for non-shared view)
   const [storedTools] = useState(() => {
-    if (typeof window !== 'undefined' && !id) return JSON.parse(localStorage.getItem('audit-tools') || '[]');
+    if (typeof window !== 'undefined' && !id) {
+      try {
+        return JSON.parse(localStorage.getItem('audit-tools') || '[]');
+      } catch {
+        return [];
+      }
+    }
     return [];
   });
   const [storedTeamSize] = useState(() => {
@@ -39,20 +45,23 @@ const ResultsPage: React.FC = () => {
     if (id) {
       async function fetchSharedAudit() {
         setIsLoadingDb(true);
+        setDbError(null);
         try {
           const { data, error } = await supabase
             .from('audits')
             .select('*')
             .eq('id', id)
             .single();
-          
+
           if (error) throw error;
           if (data) {
             setSharedResults(data.audit_data);
             setSharedTeamSize(data.team_size);
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error('Error fetching shared audit:', err);
+          setDbError('This audit report could not be found or may have expired.');
+          toast.error('Failed to load shared audit report');
         } finally {
           setIsLoadingDb(false);
         }
@@ -62,7 +71,7 @@ const ResultsPage: React.FC = () => {
   }, [id]);
 
   // Determine which results to use
-  const activeAuditResults = id 
+  const activeAuditResults = id
     ? (sharedResults || [])
     : generateAudit(storedTools.length > 0 ? storedTools.map((t: any) => ({
         tool: t.tool,
@@ -76,6 +85,7 @@ const ResultsPage: React.FC = () => {
   const annualSavings = getAnnualSavings(monthlySavings);
   const isHigh = isHighSavings(monthlySavings);
 
+  // AI Summary fetch
   useEffect(() => {
     if (activeAuditResults.length > 0) {
       async function fetchSummary() {
@@ -83,14 +93,21 @@ const ResultsPage: React.FC = () => {
         try {
           const summary = await getAiAuditSummary(activeAuditResults);
           setAiSummary(summary);
+        } catch (err) {
+          console.error('AI summary failed:', err);
+          setAiSummary('Your AI stack shows multiple optimization opportunities that could reduce recurring software spend while maintaining productivity and performance.');
+          toast.error('AI summary generation failed — using fallback');
         } finally {
           setIsLoadingSummary(false);
         }
       }
       fetchSummary();
+    } else {
+      setIsLoadingSummary(false);
     }
-  }, [activeAuditResults]);
+  }, []);
 
+  // LOADING STATE — Supabase fetch
   if (isLoadingDb) {
     return (
       <Layout>
@@ -98,6 +115,48 @@ const ResultsPage: React.FC = () => {
           <div className="text-center">
             <div className="h-12 w-12 animate-spin border-4 border-blue-600 border-t-transparent rounded-full mx-auto" />
             <p className="mt-4 text-slate-500 font-medium">Retrieving Audit Results...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // ERROR STATE — Failed to load shared audit
+  if (dbError) {
+    return (
+      <Layout>
+        <div className="flex h-[60vh] items-center justify-center">
+          <div className="panel p-10 text-center max-w-md">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-500">
+              <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-xl font-bold text-slate-900">Audit Not Found</h3>
+            <p className="mt-2 text-sm text-slate-600">{dbError}</p>
+            <a href="/" className="btn-primary mt-6 inline-block">Run a New Audit</a>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // EMPTY STATE — No tools to audit
+  if (activeAuditResults.length === 0) {
+    return (
+      <Layout>
+        <div className="flex h-[60vh] items-center justify-center">
+          <div className="panel p-10 text-center max-w-md">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+              <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-xl font-bold text-slate-900">No Tools Selected</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Select at least one AI tool to generate an audit. Head back to the form and add your stack.
+            </p>
+            <a href="/#spend-form" className="btn-primary mt-6 inline-block">Add Your Tools</a>
           </div>
         </div>
       </Layout>
@@ -133,7 +192,7 @@ const ResultsPage: React.FC = () => {
               </p>
             </div>
             <p className="mx-auto mt-8 max-w-lg text-base leading-relaxed text-slate-400">
-              {id 
+              {id
                 ? "This audit identifies recurring waste in this organization's AI stack and provides a roadmap for significant cost recovery."
                 : "Based on your current AI tooling stack, we've identified significant recovery opportunities across seat counts and tier overlaps."}
             </p>
@@ -151,7 +210,7 @@ const ResultsPage: React.FC = () => {
               {activeAuditResults.length} Tools Audited
             </span>
           </div>
-          
+
           <div className="grid gap-4 lg:grid-cols-2">
             {activeAuditResults.map((result, idx) => (
               <AuditCard key={idx} result={result} />
@@ -186,4 +245,3 @@ const ResultsPage: React.FC = () => {
 };
 
 export default ResultsPage;
-

@@ -17,27 +17,27 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
     const planName = tool.plan.toLowerCase();
 
     // RULE 1: ChatGPT Team Overkill
-    if (toolName === "chatgpt" && planName === "team" && tool.seats <= 2) {
+    if (toolName === "chatgpt" && planName === "team" && seats <= 2) {
       recommendedPlan = "plus";
-      optimizedSpend = getPlanPrice("chatgpt", "plus") * tool.seats;
+      optimizedSpend = getPlanPrice("chatgpt", "plus") * seats;
       reason = "ChatGPT Team is typically unnecessary for teams smaller than 3 users. Individual Plus accounts provide similar power for less.";
       severity = "medium";
     }
 
     // RULE 2: Cursor Business Overkill
-    if (toolName === "cursor" && planName === "business" && tool.seats <= 3) {
+    if (toolName === "cursor" && planName === "business" && seats <= 3) {
       recommendedPlan = "pro";
-      optimizedSpend = getPlanPrice("cursor", "pro") * tool.seats;
+      optimizedSpend = getPlanPrice("cursor", "pro") * seats;
       reason = "Cursor Business is optimized for larger teams. For 3 users or fewer, Pro plans usually provide all required features.";
       severity = "medium";
     }
 
     // RULE 3: Enterprise Overkill
-    if (planName === "enterprise" && tool.seats < 10) {
+    if (planName === "enterprise" && seats < 10) {
       // Find a likely business/team plan to suggest
       const fallbackPlan = toolName === "chatgpt" ? "team" : "pro";
       recommendedPlan = fallbackPlan;
-      optimizedSpend = getPlanPrice(toolName, fallbackPlan) * tool.seats;
+      optimizedSpend = getPlanPrice(toolName, fallbackPlan) * seats;
       reason = "Enterprise plans typically require a 10-seat minimum for value. Downgrading to a Team or Pro tier could save significant budget.";
       severity = "high";
     }
@@ -45,7 +45,7 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
     // RULE 4: API Usage
     if (toolName.includes("api") || toolName.includes("openai direct")) {
       recommendedPlan = "Credex Credits";
-      optimizedSpend = tool.monthlySpend * 0.8; // Assume 20% savings via Credex
+      optimizedSpend = monthlySpend * 0.8; // Assume 20% savings via Credex
       reason = "High-volume API users can often reduce infrastructure costs by 20-30% through discounted credit marketplaces like Credex.";
       severity = "high";
     }
@@ -59,14 +59,18 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
       if (severity !== "high") severity = "medium";
     }
 
+    // Ensure optimizedSpend never exceeds current spend
+    optimizedSpend = Math.min(optimizedSpend, monthlySpend);
+    const savings = Math.max(0, monthlySpend - optimizedSpend);
+
     return {
       tool: tool.tool,
       currentPlan: tool.plan,
       recommendedPlan,
-      currentSpend: tool.monthlySpend,
+      currentSpend: monthlySpend,
       optimizedSpend,
-      monthlySavings: tool.monthlySpend - optimizedSpend,
-      annualSavings: (tool.monthlySpend - optimizedSpend) * 12,
+      monthlySavings: savings,
+      annualSavings: savings * 12,
       reason,
       severity,
     };
@@ -74,3 +78,4 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
 
   return results;
 }
+

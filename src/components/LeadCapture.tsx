@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
+import toast from 'react-hot-toast';
 
 interface LeadCaptureProps {
   auditData: any;
@@ -18,8 +19,12 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
   const [error, setError] = useState<string | null>(null);
 
   const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Shareable link copied to clipboard!');
+    try {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success('Shareable link copied to clipboard!');
+    } catch {
+      toast.error('Failed to copy link');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,12 +53,14 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
       if (data) {
         setSavedId(data.id);
         setIsSuccess(true);
-        // Navigate to the shareable URL
+        toast.success('Audit saved successfully!');
         navigate(`/results/${data.id}`, { replace: true });
       }
     } catch (err: any) {
       console.error('Error saving lead:', err);
-      setError(err.message || 'Failed to save audit results. Please try again.');
+      const message = err.message || 'Failed to save audit results. Please try again.';
+      setError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -71,7 +78,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
         <p className="mt-2 text-sm text-emerald-700">
           We've saved your audit. A detailed PDF summary and optimization roadmap have been sent to <strong>{email}</strong>.
         </p>
-        <button 
+        <button
           onClick={copyLink}
           className="mt-6 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-bold text-emerald-700 shadow-sm hover:bg-emerald-50 transition-all"
         >
@@ -80,7 +87,6 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
           </svg>
           Copy Shareable Link
         </button>
-
       </div>
     );
   }
@@ -148,9 +154,16 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
           disabled={isSubmitting}
           className="btn-primary w-full py-4 text-sm font-bold shadow-lg shadow-blue-200 disabled:opacity-50"
         >
-          {isSubmitting ? 'Securing Results...' : 'Save Audit & Send Roadmap'}
+          {isSubmitting ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="h-4 w-4 animate-spin border-2 border-white border-t-transparent rounded-full" />
+              Securing Results...
+            </span>
+          ) : (
+            'Save Audit & Send Roadmap'
+          )}
         </button>
-        
+
         <p className="text-center text-[10px] text-slate-400 uppercase tracking-widest">
           No spam. Only high-signal financial clarity.
         </p>
