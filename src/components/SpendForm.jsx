@@ -1,6 +1,7 @@
 import useLocalStorage from '../hooks/useLocalStorage'
 
-const planOptions = ['Free', 'Pro', 'Team', 'Business', 'Enterprise']
+const toolOptions = ['Cursor', 'ChatGPT', 'Claude', 'GitHub Copilot', 'Gemini', 'Windsurf', 'OpenAI API Direct']
+const planOptions = ['Free', 'Pro', 'Team', 'Business', 'Enterprise', 'Pay-as-you-go']
 const useCaseOptions = ['Coding', 'Research', 'Writing', 'Data', 'Mixed']
 
 const initialTools = [
@@ -53,13 +54,17 @@ function SpendForm() {
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
                   Tool Name
                 </span>
-                <input
-                  type="text"
+                <select
                   value={tools[0].tool}
                   onChange={(event) => updateTool('tool', event.target.value)}
                   className="field-input"
-                  placeholder="Cursor"
-                />
+                >
+                  {toolOptions.map((tool) => (
+                    <option key={tool} value={tool}>
+                      {tool}
+                    </option>
+                  ))}
+                </select>
               </label>
 
               <label className="field-shell">
