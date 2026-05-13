@@ -1,51 +1,44 @@
-# AI Summary Prompting Strategy
+# AI Prompts Documentation
 
-This document outlines the iteration process for the AI Audit Summary generation.
+This document outlines the prompt engineering strategies used for the SpendLens OpenAI integration, detailing what worked, why, and what failed during development.
 
-## Final Prompt
-**Role:** AI Infrastructure Cost Optimization Expert
-**Constraint:** Under 100 words, Professional tone.
-**Content:** Focus on business impact and the "why" behind the waste.
+## Production Prompt
 
+**Full Prompt Used:**
 ```text
-You are an AI infrastructure cost optimization expert.
-Summarize this startup's AI spending inefficiencies professionally in under 100 words.
-Focus on the "why" and the business impact, not just the numbers.
+You are an AI infrastructure cost optimization consultant.
 
-Audit Data:
-{{audit_results}}
+Summarize this startup's AI spend audit in under 100 words.
+
+Input Data: {audit_results_json}
+
+Mention:
+- biggest waste areas
+- optimization opportunities
+- annual savings potential
+- realistic actionable recommendations
+
+Keep the tone professional, concise, and focused purely on the financial roadmap.
 ```
 
-### Rationale
-- **Why it works:** By providing the `AuditResult` reasons, the AI can synthesize a narrative rather than just recalculating sums (which it's prone to failing at).
-- **Tone:** Professionalism is key for founder/finance personas.
+**Why it is structured this way:**
+- **Role Assignment:** Defining the AI as a "cost optimization consultant" immediately sets the correct professional, analytical tone for an enterprise audience.
+- **Hard Constraints:** Specifying "under 100 words" prevents the UI from breaking or stretching indefinitely on the frontend results dashboard.
+- **Targeted Injection:** Instead of asking the AI to *calculate* the savings, we pass the pre-calculated, deterministic `audit_results_json` directly into the prompt. The AI acts purely as a linguistic summarizer of facts, entirely eliminating hallucination risk.
+- **Formatting Directives:** Explicitly listing bullet points (waste areas, opportunities, savings) ensures the output focuses on actionable insights rather than generic fluff.
 
 ---
 
-## Iteration History
+## Failed Prompt Attempts
 
-### Failed Prompt 1: Too broad
+**Attempt 1: The "Do It All" Prompt**
 ```text
-Look at this AI spend and tell me how to save money.
+Here is a list of tools the user is subscribed to and their team size: {tools}. Tell them how much money they can save by switching tiers and calculate the annual savings.
 ```
-- **Why it failed:** Too vague. The output was conversational and included general advice (like "cancel subscriptions") rather than specific analysis based on the provided data.
-- **Change:** Added specific roles and persona constraints.
+*Why it failed:* The LLM frequently hallucinated pricing data (e.g., claiming ChatGPT Team was $40/user instead of $30) and failed at basic multiplication for seat counts, leading to entirely fabricated financial reports.
 
-### Failed Prompt 2: Math-heavy
+**Attempt 2: The "JSON Schema" Prompt**
 ```text
-Calculate the total savings and summarize the tools: {{audit_results}}
+Analyze this spend and return a JSON object with the recommended plans, optimized spend, and a summary.
 ```
-- **Why it failed:** Large Language Models (LLMs) are notorious for hallucinating math. It occasionally provided a total that didn't match our `calculateSavings.ts` logic.
-- **Change:** Removed calculation requests. The engine handles math; the AI handles the **Executive Summary**.
-
-### Failed Prompt 3: Wordiness
-```text
-Provide a detailed report on the following audit data...
-```
-- **Why it failed:** Resulted in 300-500 word essays that broke the UI layout and diluted the immediate value proposition.
-- **Change:** Enforced a strict 100-word limit.
-
----
-
-## Error Handling Rationale
-The application implements a **Graceful Fallback** mechanism. If the API key is missing, rate-limited, or the service is down, the system returns a pre-validated professional summary to ensure the user experience remains premium and uninterrupted.
+*Why it failed:* While it generated JSON successfully, the AI still struggled with the deterministic business rules of tier minimums (e.g., Enterprise plans requiring 10 seats). It proved that AI should handle the *prose*, not the *math* or the *schema*. This reversal led directly to building the hardcoded TypeScript engine and delegating only the summary to OpenAI.
