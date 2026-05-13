@@ -1,16 +1,46 @@
-# React + Vite
+# 🔍 SpendLens
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SpendLens is a free AI spend auditing platform that helps startups identify overspending across AI subscriptions and APIs. In under 60 seconds, it analyzes your stack, flags unused seats, identifies tier overlaps, and generates a personalized optimization roadmap.
 
-Currently, two official plugins are available:
+## 📸 Screenshots
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Homepage | Audit Form |
+|---|---|
+| ![Homepage](./public/homepage.png) | ![Audit Form](./public/audit-form.png) |
+| **Results Page** | **Public Share Page** |
+| ![Results Page](./public/results-page.png) | ![Public Share Page](./public/public-share.png) |
 
-## React Compiler
+*(Note: Add screenshot files to the `public/` directory matching the names above to display them here.)*
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Quick Start
 
-## Expanding the ESLint configuration
+Get the project running locally in two commands:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Clone the repository
+# git clone https://github.com/Mohit-Bharambe/AI-Spend-Audit-.git
+# cd ai-audit
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+## 🧠 Architectural Decisions
+
+1. **Deterministic Financial Engine:** Used hardcoded audit rules instead of AI-generated recommendations because pricing optimization requires deterministic, mathematically predictable financial logic.
+2. **AI for Executive Summaries:** Delegated AI strictly to generating the ~100-word executive summary to provide contextualized, human-readable insights without risking hallucinations on critical cost calculations.
+3. **Decoupled Pricing Database:** Isolated pricing and plan data into a centralized `pricingData.ts` module to allow for rapid, configuration-only updates as AI SaaS companies change their pricing models over time.
+4. **Graceful Degradation:** Built a robust template-based fallback system for the AI summary feature. If the OpenAI API fails, the application seamlessly builds an analytical summary using the deterministic audit data instead of crashing the UI.
+5. **Local-First to Viral Loop:** Leveraged `localStorage` for the initial audit experience to eliminate friction (no login required), but utilized Supabase for a lead capture step that persists the data, generates a unique URL, and unlocks the viral sharing experience.
+
+## 🛠 Tech Stack
+
+* **Frontend:** React 19, Vite, Tailwind CSS (v4)
+* **Routing & Meta:** React Router DOM, React Helmet Async
+* **Backend & DB:** Supabase
+* **AI Integration:** OpenAI API
+* **Testing:** Vitest, React Testing Library
+* **CI/CD:** GitHub Actions
