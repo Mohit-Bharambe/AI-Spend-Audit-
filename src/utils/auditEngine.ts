@@ -1,11 +1,17 @@
 import { ToolInput, AuditResult } from "../types/audit";
 import { getPlanPrice } from "./getPlanPrice";
 
+/**
+ * SpendLens Audit Engine
+ * 
+ * Core business logic for identifying AI spend waste. 
+ * Uses deterministic rules based on seat counts, plan tiers, and tool overlaps.
+ */
 export function generateAudit(tools: ToolInput[]): AuditResult[] {
   const toolNames = tools.map(t => t.tool.toLowerCase());
 
   const results: AuditResult[] = tools.map((tool) => {
-    // Defensive sanitization — prevent NaN from bad inputs
+    // Defensive sanitization — prevent NaN or invalid data from reaching the results
     const monthlySpend = Number(tool.monthlySpend) || 0;
     const seats = Math.max(1, Number(tool.seats) || 1);
 
@@ -17,7 +23,10 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
     const toolName = tool.tool.toLowerCase();
     const planName = tool.plan.toLowerCase();
 
-    // RULE 1: ChatGPT Team Overkill
+    /**
+     * RULE 1: ChatGPT Team Minimums
+     * ChatGPT Team requires a minimum spend that is inefficient for solo or 2-person setups.
+     */
     if (toolName === "chatgpt" && planName === "team" && seats <= 2) {
       const price = getPlanPrice("chatgpt", "plus");
       recommendedPlan = "Plus";
@@ -26,7 +35,10 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
       severity = "medium";
     }
 
-    // RULE 2: Cursor Business Overkill
+    /**
+     * RULE 2: Cursor Business Efficiency
+     * Cursor Business features are often overkill for small development squads (<=3).
+     */
     if (toolName === "cursor" && planName === "business" && seats <= 3) {
       const price = getPlanPrice("cursor", "pro");
       recommendedPlan = "Pro";
@@ -35,7 +47,11 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
       severity = "medium";
     }
 
-    // RULE 3: Enterprise Overkill
+    /**
+     * RULE 3: Enterprise Tier Minimums
+     * Most Enterprise AI agreements have a 10-20 seat floor. Small teams paying for Enterprise
+     * are usually paying for unused 'phantom' seats.
+     */
     if (planName === "enterprise" && seats < 10) {
       const fallbackPlan = toolName === "chatgpt" ? "team" : "pro";
       const price = getPlanPrice(toolName, fallbackPlan);
@@ -45,7 +61,10 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
       severity = "high";
     }
 
-    // RULE 4: API Usage
+    /**
+     * RULE 4: API Direct Optimization
+     * High API volume is almost always better served by wholesale credit purchase (Credex model).
+     */
     if (toolName.includes("api") || toolName.includes("openai direct")) {
       recommendedPlan = "Credex Credits";
       optimizedSpend = monthlySpend * 0.8;
@@ -53,7 +72,10 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
       severity = "high";
     }
 
-    // RULE 5: Duplicate Tool Logic (Check for overlap)
+    /**
+     * RULE 5: Redundant Chat Stack
+     * Detect if the team is paying for multiple premium chat LLMs (ChatGPT + Claude + Gemini).
+     */
     const chatTools = ["chatgpt", "claude", "gemini"];
     const activeChatTools = toolNames.filter(name => chatTools.includes(name));
 
@@ -62,7 +84,7 @@ export function generateAudit(tools: ToolInput[]): AuditResult[] {
       if (severity !== "high") severity = "medium";
     }
 
-    // Final safety guards — never allow NaN or negative savings
+    // Safety guards — ensure we never show negative savings or mathematical anomalies
     if (isNaN(optimizedSpend) || optimizedSpend < 0) optimizedSpend = monthlySpend;
     optimizedSpend = Math.min(optimizedSpend, monthlySpend);
     const savings = Math.max(0, monthlySpend - optimizedSpend);

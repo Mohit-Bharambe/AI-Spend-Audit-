@@ -198,7 +198,7 @@ const ResultsPage: React.FC = () => {
       </Helmet>
       <div className="animate-enter space-y-10 py-6">
         {/* HERO SAVINGS CARD */}
-        <section className="panel relative overflow-hidden bg-slate-900 px-6 py-12 text-center text-white shadow-2xl sm:px-12 sm:py-16">
+        <section className="panel relative overflow-hidden bg-slate-900 px-5 py-10 text-center text-white shadow-2xl sm:px-12 sm:py-16">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.15),_transparent_50%)]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.08),_transparent_50%)]" />
           <div className="relative">

@@ -114,6 +114,11 @@ function SpendForm() {
                   className="field-input"
                   placeholder="2"
                 />
+                {tools[0].seats > 50 && (
+                  <p className="mt-2 text-[10px] font-medium text-amber-600 animate-pulse">
+                    ⚠️ High seat count detected. Consider Enterprise pricing.
+                  </p>
+                )}
               </label>
             </div>
 
