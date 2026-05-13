@@ -57,7 +57,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ auditData, teamSize }) => {
         navigate(`/results/${data.id}`, { replace: true });
       }
     } catch (err: any) {
-      console.error('Error saving lead:', err);
+
       const message = err.message || 'Failed to save audit results. Please try again.';
       setError(message);
       toast.error(message);

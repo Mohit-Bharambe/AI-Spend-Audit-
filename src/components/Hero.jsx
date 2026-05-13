@@ -17,10 +17,10 @@ function Hero() {
             normalized.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <button type="button" className="btn-primary">
+            <button type="button" className="btn-primary" aria-label="Run a free AI spend audit">
               Run Free Audit
             </button>
-            <button type="button" className="btn-secondary">
+            <button type="button" className="btn-secondary" aria-label="See a sample audit report">
               See sample report
             </button>
           </div>

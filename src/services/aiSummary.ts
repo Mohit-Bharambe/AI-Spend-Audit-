@@ -63,7 +63,7 @@ export async function getAiAuditSummary(results: AuditResult[]): Promise<string>
     return data.choices[0]?.message?.content?.trim() || FALLBACK_MESSAGE;
 
   } catch (error) {
-    console.error("Failed to fetch AI summary:", error);
+
     // Graceful handling as per assignment requirements
     return FALLBACK_MESSAGE;
   }

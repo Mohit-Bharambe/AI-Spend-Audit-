@@ -72,7 +72,7 @@ ${JSON.stringify(snapshot, null, 2)}`;
 
     return content || buildTemplateSummary(results, totalMonthlySavings, totalAnnualSavings);
   } catch (error) {
-    console.error("AI summary generation failed:", error);
+
     // Graceful fallback — never crash the UI
     return buildTemplateSummary(results, totalMonthlySavings, totalAnnualSavings);
   }

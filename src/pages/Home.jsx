@@ -1,4 +1,3 @@
-import AuditResults from './AuditResults'
 import Hero from '../components/Hero'
 import Layout from '../components/Layout'
 import SpendForm from '../components/SpendForm'
@@ -85,15 +84,14 @@ function Home() {
   return (
     <Layout>
       <Helmet>
-        <title>Spend Audit | Identify and Cut Startup AI Waste</title>
+        <title>SpendLens | Identify and Cut Startup AI Waste</title>
         <meta name="description" content="Audit your AI tooling stack in seconds. Identify overlapping subscriptions, unused seats, and over-provisioned enterprise tiers." />
-        <meta property="og:title" content="Spend Audit | Cut Startup AI Waste" />
+        <meta property="og:title" content="SpendLens | Cut Startup AI Waste" />
         <meta property="og:description" content="Audit your AI tooling stack in seconds. Stop overpaying for AI." />
         <meta property="og:image" content="https://xdjulsytbmiqvfdulfii.supabase.co/storage/v1/object/public/assets/audit-preview.png" />
       </Helmet>
       <Hero />
       <SpendForm />
-      <AuditResults />
 
       <section id="features" className="mt-10 lg:mt-14">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -228,7 +226,7 @@ function Home() {
             Run a fast audit, identify wasted seats, and tighten your AI stack
             without adding procurement drag.
           </p>
-          <button type="button" className="btn-primary relative mt-8">
+          <button type="button" className="btn-primary relative mt-8" aria-label="Run a free AI spend audit">
             Run Free Audit
           </button>
         </div>
@@ -238,7 +236,7 @@ function Home() {
         id="footer"
         className="mt-10 flex flex-col gap-4 border-t border-slate-200 px-2 py-8 text-xs font-bold uppercase tracking-widest text-slate-400 sm:mt-14 sm:flex-row sm:items-center sm:justify-between"
       >
-        <p>Spend Audit &copy; 2026</p>
+        <p>SpendLens &copy; 2026</p>
         <div className="flex gap-6">
           <a href="#features" className="transition hover:text-slate-900">
             Features

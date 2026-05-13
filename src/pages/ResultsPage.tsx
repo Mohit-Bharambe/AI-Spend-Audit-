@@ -63,7 +63,7 @@ const ResultsPage: React.FC = () => {
             setSharedTeamSize(data.team_size);
           }
         } catch (err: any) {
-          console.error('Error fetching shared audit:', err);
+
           setDbError('This audit report could not be found or may have expired.');
           toast.error('Failed to load shared audit report');
         } finally {
@@ -102,7 +102,7 @@ const ResultsPage: React.FC = () => {
           const summary = await generateSummary(activeAuditResults);
           setAiSummary(summary);
         } catch (err) {
-          console.error('AI summary failed:', err);
+
           setAiSummary('Your AI stack shows multiple optimization opportunities that could reduce recurring software spend while maintaining productivity and performance.');
           toast.error('AI summary generation failed — using fallback');
         } finally {

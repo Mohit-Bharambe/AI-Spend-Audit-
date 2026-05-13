@@ -6,11 +6,11 @@ function Navbar() {
       <div className="flex items-center justify-between gap-4">
         <Link to="/" className="flex min-w-0 items-center gap-4 hover:opacity-80 transition-opacity">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-900 text-sm font-semibold text-white shadow-sm">
-            SA
+            SL
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold uppercase tracking-[0.15em] text-slate-900">
-              Spend Audit
+              SpendLens
             </p>
             <p className="truncate text-xs text-slate-500">
               Finance-aware AI cost clarity
@@ -33,7 +33,7 @@ function Navbar() {
           </Link>
         </nav>
 
-        <Link to="/results" className="btn-primary px-5 py-2.5 text-sm">
+        <Link to="/results" className="btn-primary px-5 py-2.5 text-sm" aria-label="Navigate to results page and run audit">
           Run Free Audit
         </Link>
       </div>
