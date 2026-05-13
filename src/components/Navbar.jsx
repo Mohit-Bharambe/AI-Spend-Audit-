@@ -5,8 +5,11 @@ function Navbar() {
     <header className="panel sticky top-4 z-20 animate-enter px-4 py-4 sm:px-6">
       <div className="flex items-center justify-between gap-4">
         <Link to="/" className="flex min-w-0 items-center gap-4 hover:opacity-80 transition-opacity">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-900 text-sm font-semibold text-white shadow-sm">
-            SL
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-900 shadow-sm transition-transform group-hover:scale-105">
+            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M12 12h.01M12 12h.01M11 12h.01" />
+            </svg>
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold uppercase tracking-[0.15em] text-slate-900">
