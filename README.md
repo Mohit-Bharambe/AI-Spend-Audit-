@@ -2,15 +2,7 @@
 
 SpendLens is a free AI spend auditing platform that helps startups identify overspending across AI subscriptions and APIs. In under 60 seconds, it analyzes your stack, flags unused seats, identifies tier overlaps, and generates a personalized optimization roadmap.
 
-## 📸 Screenshots
 
-| Homepage | Audit Form |
-|---|---|
-| ![Homepage](./public/homepage.png) | ![Audit Form](./public/audit-form.png) |
-| **Results Page** | **Public Share Page** |
-| ![Results Page](./public/results-page.png) | ![Public Share Page](./public/public-share.png) |
-
-*(Note: Add screenshot files to the `public/` directory matching the names above to display them here.)*
 
 ## 🚀 Quick Start
 
