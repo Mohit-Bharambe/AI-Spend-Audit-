@@ -126,14 +126,17 @@ const ResultsPage: React.FC = () => {
     }
   };
 
-  // LOADING STATE — Supabase fetch
+  // LOADING STATE — Full Page Skeleton
   if (isLoadingDb) {
     return (
       <Layout>
-        <div className="flex h-[60vh] items-center justify-center">
-          <div className="text-center">
-            <div className="h-12 w-12 animate-spin border-4 border-blue-600 border-t-transparent rounded-full mx-auto" />
-            <p className="mt-4 text-slate-500 font-medium">Retrieving Audit Results...</p>
+        <div className="animate-enter space-y-10 py-6">
+          <div className="panel h-[400px] w-full animate-pulse bg-slate-100" />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="panel h-48 animate-pulse bg-slate-100" />
+            <div className="panel h-48 animate-pulse bg-slate-100" />
+            <div className="panel h-48 animate-pulse bg-slate-100" />
+            <div className="panel h-48 animate-pulse bg-slate-100" />
           </div>
         </div>
       </Layout>

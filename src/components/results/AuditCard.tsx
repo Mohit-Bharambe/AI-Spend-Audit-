@@ -43,7 +43,18 @@ const AuditCard: React.FC<AuditCardProps> = ({ result }) => {
           </div>
         </div>
 
-        {!isOptimized && (
+        {isOptimized ? (
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-center shadow-sm sm:min-w-[140px]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Status</p>
+            <p className="mt-1 text-2xl font-bold text-slate-900">
+              Optimal
+            </p>
+            <div className="mt-2 flex items-center justify-center gap-1">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-[10px] font-medium text-emerald-600 uppercase tracking-tighter">Healthy Spend</p>
+            </div>
+          </div>
+        ) : (
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-center shadow-sm sm:min-w-[140px]">
             <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600/80">Monthly Savings</p>
             <p className="mt-1 text-3xl font-bold text-emerald-700">

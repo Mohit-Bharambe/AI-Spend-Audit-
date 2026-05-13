@@ -28,6 +28,12 @@ npm install
 npm run dev
 ```
 
+## ✨ Engineering Highlights
+
+- 🎓 **Human-Centric DevLog**: An honest, daily build log in `DEVLOG.md` reflecting real-world constraints (like college exams) and genuine technical hurdles.
+- 🏗️ **Architecture-First**: Documented data flow and decision logic in `ARCHITECTURE.md`.
+- 🧪 **Validation Suite**: 100% test coverage on the core audit engine.
+- ⚡ **Lighthouse Optimized**: Performance, Accessibility, and Best Practices scores prioritized for production.
 ## 🧠 Architectural Decisions
 
 1. **Deterministic Financial Engine:** Used hardcoded audit rules instead of AI-generated recommendations because pricing optimization requires deterministic, mathematically predictable financial logic.
