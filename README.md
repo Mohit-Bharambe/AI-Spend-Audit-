@@ -28,6 +28,18 @@ npm install
 npm run dev
 ```
 
+## 🌐 Deployment (Vercel)
+
+SpendLens is optimized for Vercel. To deploy:
+
+1. Push your code to GitHub.
+2. Import the project into Vercel.
+3. Configure the following **Environment Variables** in the Vercel Dashboard:
+   - `VITE_SUPABASE_URL`: Your Supabase Project URL.
+   - `VITE_SUPABASE_ANON_KEY`: Your Supabase Anon Key.
+   - `VITE_AI_API_KEY`: Your OpenRouter or OpenAI API key.
+4. Deployment will be automatic on every push to `main`.
+
 ## ✨ Engineering Highlights
 
 - 🎓 **Human-Centric DevLog**: An honest, daily build log in `DEVLOG.md` reflecting real-world constraints (like college exams) and genuine technical hurdles.
