@@ -38,14 +38,16 @@ export async function getAiAuditSummary(results: AuditResult[]): Promise<string>
       return FALLBACK_MESSAGE;
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
+        "Authorization": `Bearer ${apiKey}`,
+        "HTTP-Referer": window.location.origin, // Required by OpenRouter for client-side
+        "X-Title": "SpendLens Audit"
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "openai/gpt-3.5-turbo",
         messages: [
           { role: "system", content: "You are a professional financial auditor specialized in AI SaaS." },
           { role: "user", content: prompt }

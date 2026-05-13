@@ -6,10 +6,10 @@ const useCaseOptions = ['Coding', 'Research', 'Writing', 'Data', 'Mixed']
 
 const initialTools = [
   {
-    tool: 'Cursor',
-    plan: 'Pro',
-    spend: 40,
-    seats: 2,
+    tool: 'ChatGPT',
+    plan: 'Team',
+    spend: 30,
+    seats: 1,
   },
 ]
 
